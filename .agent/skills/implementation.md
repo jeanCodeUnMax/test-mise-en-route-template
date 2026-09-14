@@ -1,7 +1,12 @@
 # SKILL — IMPLEMENTATION
 
+## Mandatory preflight
+1. Run `.\hephaistos status` or read `.hephaistos/state.yaml` and `docs/master/PROJECT_MASTER.md` if the CLI is unavailable.
+2. Continue only if the current HEPHAISTOS state authorizes this skill.
+3. If another step is expected, stop and report the expected next action.
+
 ## Goal
-Implement a development task while preserving traceability.
+Implement TASK_ACTIVE while preserving traceability.
 
 ## Before coding
 Read:
@@ -20,10 +25,10 @@ Read:
 5. run tests
 6. capture logs/results
 7. update docs if behavior/interface changed
-8. run CLI check
-9. finish only after validation
+8. create required evidence/check files
+9. run `.\hephaistos check <TASK_ID>`
+10. finish only after validation
 
 ## Guardrails
 Do not refactor unrelated modules during an atomic task.
-Do not introduce speculative architecture unless required.
 Record discovered technical debt as backlog.
