@@ -3,3 +3,5 @@ project:
   name: null
   mission: null
   status: UNINITIALIZED
+active_subject: UNDEFINED
+allowed_branches: []
