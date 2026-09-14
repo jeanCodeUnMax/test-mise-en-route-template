@@ -78,6 +78,13 @@ def slugify(value):
 def today():
     return datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%d')
 
+
+def markdown_list(items, fallback):
+    if items:
+        return ''.join(f'- {x}\n' for x in items)
+    return f'- TODO: {fallback}\n'
+
+
 def req_init():
     if pstatus() != 'ACTIVE':
         raise SystemExit('Project UNINITIALIZED. Run: .\\hephaistos init --name "My Project" --mission "..."')
@@ -401,15 +408,35 @@ def state_of_art(args):
     filename = RADAR_DOCS / f"state-of-art-{today()}-{slugify(args.idea)}.md"
     sources = args.source or []
     source_lines = ''.join(f"- {s}\n" for s in sources) if sources else "- TODO: add sources from web/scientific/legal/market search\n"
+    research_questions = markdown_list(getattr(args, 'research_question', None), 'formulate the question(s) the idea must answer.')
+    methods = markdown_list(getattr(args, 'method', None), 'list compared methods/variants, including the proposed one.')
+    baselines = markdown_list(getattr(args, 'baseline', None), 'list baselines that must be beaten or explained.')
+    axes = markdown_list(getattr(args, 'axis', None), 'define experiment axes: scale, data, model, hardware, regulation, market segment.')
+    metrics = markdown_list(getattr(args, 'metric', None), 'define measurable KPIs: quality, cost, latency, memory, safety, proof, compliance.')
+    benchmarks = markdown_list(getattr(args, 'benchmark', None), 'define benchmarks/datasets/tasks that will decide the claim.')
+    scaling_tests = markdown_list(getattr(args, 'scaling_test', None), 'state expected curves or crossover tests: IsoCost, IsoLatency, IsoMemory, quality vs budget.')
+    external_baselines = markdown_list(getattr(args, 'external_baseline', None), 'compare against named papers, products, models, laws, or open-source tools.')
+    limitations = markdown_list(getattr(args, 'limitation', None), 'name failure modes, missing evidence, invalidating cases, and uncertainty.')
+    transfer = markdown_list(getattr(args, 'transfer', None), 'extract reusable methods, formulas, datasets, plots, or warnings for the project.')
     content = (
         f"# State Of Art — {args.idea}\n\n"
         f"## ACTIVE_SUBJECT\n{active_subject()}\n\n"
         f"## QUERY\n{args.query}\n\n"
         f"## SOURCES\n{source_lines}\n"
+        f"## RESEARCH_QUESTIONS\n{research_questions}\n"
+        f"## METHOD_VARIANTS\n{methods}\n"
+        f"## BASELINES_TO_BEAT\n{baselines}\n"
+        f"## EXPERIMENT_AXES\n{axes}\n"
+        f"## METRICS_AND_KPIS\n{metrics}\n"
+        f"## BENCHMARKS_AND_DATASETS\n{benchmarks}\n"
+        f"## SCALING_OR_CROSSOVER_TESTS\n{scaling_tests}\n"
+        f"## EXTERNAL_BASELINES\n{external_baselines}\n"
         f"## ALREADY_DONE\n{args.already_done or 'TODO: summarize what already exists.'}\n\n"
         f"## USEFUL_INDICES\n{args.indices or 'TODO: note reusable methods, warnings, datasets, metrics, or architecture hints.'}\n\n"
         f"## GAP_OR_DIFFERENCE_REQUIRED\n{args.gap or 'TODO: state the significant difference needed to justify continuing.'}\n\n"
         f"## MARKET_OR_REGULATORY_SIGNAL\n{args.market or 'TODO: buyer pain, law/regulation, cost, safety, compliance, or timing signal.'}\n\n"
+        f"## LIMITATIONS_AND_KILL_CRITERIA\n{limitations}\n"
+        f"## TRANSFER_TO_PROJECT\n{transfer}\n"
         f"## GO_NO_GO\n{args.go}\n\n"
         f"## WHY\n{args.why or 'TODO: explain why this deserves PRD, modification, backlog, or rejection.'}\n\n"
         f"## NEXT_ACTION\n{args.next_action or 'TODO: PRD / NEW_HYPOTHESIS / BACKLOG / REJECTED.'}\n"
@@ -449,6 +476,16 @@ def main():
     q.add_argument('idea')
     q.add_argument('--query', required=True)
     q.add_argument('--source', action='append')
+    q.add_argument('--research-question', action='append')
+    q.add_argument('--method', action='append')
+    q.add_argument('--baseline', action='append')
+    q.add_argument('--axis', action='append')
+    q.add_argument('--metric', action='append')
+    q.add_argument('--benchmark', action='append')
+    q.add_argument('--scaling-test', action='append')
+    q.add_argument('--external-baseline', action='append')
+    q.add_argument('--limitation', action='append')
+    q.add_argument('--transfer', action='append')
     q.add_argument('--already-done')
     q.add_argument('--indices')
     q.add_argument('--gap')

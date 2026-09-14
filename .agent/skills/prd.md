@@ -13,7 +13,7 @@ Convert an authorized, externally checked idea into an implementation-ready Prod
 - title
 - problem
 - users / actors
-- state-of-art summary
+- state-of-art summary with research questions, baselines, metrics, benchmarks, and limitations
 - difference / thesis
 - goals
 - non-goals
@@ -44,3 +44,4 @@ A PRD is ready for decomposition only if:
 - unresolved blockers are identified
 - out-of-scope items are explicit
 - first proof/benchmark path is visible
+- baselines, metrics, and kill criteria from the state-of-art report are preserved

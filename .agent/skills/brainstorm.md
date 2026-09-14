@@ -17,13 +17,21 @@ Generate useful alternatives, then force promising ideas through a mini state-of
 6. Produce or request a `state-of-art` report before PRD.
 
 ## State-of-art questions
-- What already exists?
+Use a paper-grade review frame before PRD:
+
+- What exact research/business question is being tested?
+- Which methods and variants must be compared?
+- Which baselines must be beaten?
 - Which papers/tools/laws/market signals matter?
-- What part of the idea is already solved?
-- What part remains open?
-- What difference must we bring?
+- What experiment axes matter: scale, data, model, hardware, prompt class, attack/failure class, regulation, market?
+- Which metrics and KPIs decide the claim: quality, memory, latency, cost, safety, traceability, compliance?
+- Which benchmarks/datasets/tasks will decide the claim?
+- What scaling or crossover curve would make the idea serious?
+- What part is already solved?
+- What useful indices can be reused?
+- What gap/difference must we bring?
 - What would prove the idea impossible or not worth doing?
-- What is the smallest testable next step?
+- What transfers into PRD, tasks, benchmark plan, or research note?
 
 ## Classification
 Use exactly:
@@ -37,6 +45,6 @@ Produce:
 - concise idea set
 - top idea
 - search query pack
-- state-of-art summary or command
+- paper-grade state-of-art summary or command
 - GO / NO_GO / MODIFY / INCONCLUSIVE recommendation
 - `radar-add` commands for non-active ideas

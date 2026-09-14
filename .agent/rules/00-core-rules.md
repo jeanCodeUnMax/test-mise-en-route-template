@@ -32,6 +32,8 @@ Promising ideas must be checked against external reality before PRD:
 
 Every state-of-art report must decide: GO, NO_GO, MODIFY, or INCONCLUSIVE.
 
+A valid state-of-art report must be paper-grade: research questions, method variants, baselines, axes, metrics, benchmarks, scaling/crossover tests, external baselines, limits, kill criteria, and transfer into PRD/tasks/benchmarks.
+
 ## Active subject rule
 A new idea is not automatically drift.
 It is authorized when it strengthens `ACTIVE_SUBJECT` and can be expressed as a testable claim, required evidence, state-of-art report, or backlog item.
