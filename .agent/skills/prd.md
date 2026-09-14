@@ -1,7 +1,12 @@
 # SKILL — PRD
 
+## Mandatory preflight
+1. Run `.\hephaistos status` or read `.hephaistos/state.yaml` and `docs/master/PROJECT_MASTER.md` if the CLI is unavailable.
+2. Continue only if the current HEPHAISTOS state authorizes this skill.
+3. If another step is expected, stop and report the expected next action.
+
 ## Goal
-Convert an idea into an implementation-ready Product Requirements Document.
+Convert an authorized idea into an implementation-ready Product Requirements Document.
 
 ## PRD structure
 - title

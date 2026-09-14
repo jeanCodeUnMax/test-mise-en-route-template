@@ -1,5 +1,9 @@
 #!/bin/sh
+set -eu
 MSG_FILE="$1"
-ACTIVE=$(grep -E '^active_task:[[:space:]]*T[0-9]+' .hephaistos/state.yaml 2>/dev/null | awk '{print $2}')
+ACTIVE=$(grep -E '^active_task:[[:space:]]*T[0-9]+' .hephaistos/state.yaml 2>/dev/null | awk '{print $2}' || true)
 [ -z "$ACTIVE" ] && exit 0
-grep -q "$ACTIVE" "$MSG_FILE" || { echo "⛔ Commit message must reference ACTIVE task: $ACTIVE"; exit 1; }
+grep -q "$ACTIVE" "$MSG_FILE" || {
+  echo "HEPHAISTOS_GATE_FAIL: commit message must reference ACTIVE task: $ACTIVE" >&2
+  exit 1
+}

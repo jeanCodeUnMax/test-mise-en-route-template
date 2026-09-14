@@ -1,5 +1,10 @@
 # SKILL — TASK DECOMPOSITION
 
+## Mandatory preflight
+1. Run `.\hephaistos status` or read `.hephaistos/state.yaml` and `docs/master/PROJECT_MASTER.md` if the CLI is unavailable.
+2. Continue only if the current HEPHAISTOS state authorizes this skill.
+3. If another step is expected, stop and report the expected next action.
+
 ## Goal
 Transform a PRD/roadmap into a deterministic task dependency graph.
 
@@ -10,13 +15,6 @@ Transform a PRD/roadmap into a deterministic task dependency graph.
 4. Define evidence and done conditions.
 5. Validate the graph.
 
-## Hierarchy
-PROJECT
-→ MILESTONE
-→ TASK
-→ SUBTASK
-→ CHECK / EVIDENCE
-
 ## Task requirements
 Every task must define:
 - id
@@ -24,23 +22,14 @@ Every task must define:
 - milestone
 - objective
 - status
-- depends_on
+- requires or depends_on
 - subtasks
 - inputs
 - outputs
 - tests
-- evidence
+- checks/evidence paths
 - done_when
 - next
-
-## Granularity
-TASK = one independently verifiable outcome.
-SUBTASK = necessary step inside a task.
-
-Split a task when it has:
-- multiple independent outputs
-- separate dependencies
-- separate validation cycles
 
 ## Graph validation
 Before saving:
@@ -48,11 +37,7 @@ Before saving:
 - no missing dependencies
 - no dependency cycles
 - no task without done_when
+- no task without evidence/check paths
 - every PRD deliverable covered
 - every success criterion mapped to validation
-- identify critical path
-- identify parallelizable tasks
-- identify first READY task
-
-## State
-Only the first admissible task becomes ACTIVE unless parallelism is explicitly authorized.
+- exactly one first ACTIVE task unless parallelism is explicitly authorized

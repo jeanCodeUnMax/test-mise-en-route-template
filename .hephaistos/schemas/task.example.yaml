@@ -8,4 +8,8 @@ subtasks:
   - Define one concrete execution step
 checks:
   - path: evidence/T001/example.txt
+done_when:
+  - Evidence file exists and is not synthetic unless explicitly declared.
+  - Tests or validation commands are recorded.
+  - Result, conclusion, and next action are written.
 next: NONE

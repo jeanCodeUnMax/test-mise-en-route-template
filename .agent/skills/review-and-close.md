@@ -1,5 +1,10 @@
 # SKILL — REVIEW & CLOSE
 
+## Mandatory preflight
+1. Run `.\hephaistos status` or read `.hephaistos/state.yaml` and `docs/master/PROJECT_MASTER.md` if the CLI is unavailable.
+2. Continue only if the current HEPHAISTOS state authorizes this skill.
+3. If another step is expected, stop and report the expected next action.
+
 ## Goal
 Prevent premature completion and forgotten work.
 
@@ -23,13 +28,6 @@ Also check:
 - raw results preserved
 - conclusion written
 - KEEP / MODIFY / KILL / INCONCLUSIVE selected
-
-## Development close
-Also check:
-- code works
-- tests pass
-- interface/docs updated if needed
-- no unrelated changes accidentally included
 
 ## Final rule
 If any mandatory condition fails, task remains ACTIVE or VALIDATING.
