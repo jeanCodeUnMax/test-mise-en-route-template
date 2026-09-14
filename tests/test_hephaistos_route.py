@@ -2,6 +2,7 @@ import importlib.util
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 
 SCRIPT = Path(__file__).parents[1] / 'scripts' / 'hephaistos' / 'hephaistos_cli.py'
 SPEC = importlib.util.spec_from_file_location('hephaistos_cli', SCRIPT)
@@ -20,6 +21,7 @@ def configure(root: Path):
     cli.MASTER = root / 'docs/master/PROJECT_MASTER.md'
     cli.PRD = root / 'docs/prd/PRD.md'
     cli.RADAR = root / '.hephaistos/radar.jsonl'
+    cli.RADAR_DOCS = root / 'docs/radar'
 
 
 class HephaistosRouteTests(unittest.TestCase):
@@ -73,6 +75,46 @@ class HephaistosRouteTests(unittest.TestCase):
             (root / 'docs/radar').mkdir(parents=True)
             (root / 'docs/radar/state-of-art-20260914-test.md').write_text('# State Of Art')
             self.assertEqual(cli.route_state()['stage'], 'PRD_REQUIRED')
+
+
+    def test_state_of_art_command_writes_paper_grade_sections(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            configure(root)
+            (root / '.hephaistos/tasks').mkdir(parents=True)
+            (root / '.hephaistos/project.yaml').write_text('project:\n  status: ACTIVE\nactive_subject: KV proof\n')
+            (root / '.hephaistos/state.yaml').write_text('active_task: null\n')
+            args = SimpleNamespace(
+                idea='KV cache compression',
+                query='KV cache compression poisoning transport benchmarks',
+                source=['https://arxiv.org/pdf/2609.12303'],
+                research_question=['Can compressed KV keep quality and reduce memory?'],
+                method=['Proposed KV truncation with chronology realignment'],
+                baseline=['Full KV cache without compression'],
+                axis=['compression ratio'],
+                metric=['memory MB and latency ms/token'],
+                benchmark=['needle retrieval and downstream task accuracy'],
+                scaling_test=['IsoMemory quality crossover'],
+                external_baseline=['published KV cache compression papers'],
+                limitation=['quality collapse under long context'],
+                transfer=['use paper-style crossover plots before PRD'],
+                already_done='Existing KV cache systems optimize memory or eviction.',
+                indices='Track memory, latency, quality, poisoning leakage.',
+                gap='Need proof that compression keeps traceability and quality.',
+                market='Lower GPU memory cost and safer agent handoff.',
+                go='MODIFY',
+                why='The idea needs a measurable proof path before implementation.',
+                next_action='Create PRD with benchmarks.'
+            )
+            cli.state_of_art(args)
+            reports = list((root / 'docs/radar').glob('state-of-art-*.md'))
+            self.assertEqual(len(reports), 1)
+            report = reports[0].read_text()
+            self.assertIn('## RESEARCH_QUESTIONS', report)
+            self.assertIn('## METHOD_VARIANTS', report)
+            self.assertIn('## BASELINES_TO_BEAT', report)
+            self.assertIn('## SCALING_OR_CROSSOVER_TESTS', report)
+            self.assertIn('IsoMemory quality crossover', report)
 
 
 if __name__ == '__main__':
