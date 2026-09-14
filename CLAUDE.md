@@ -14,15 +14,25 @@ Before brainstorming, PRD work, decomposition, implementation, review, research,
 Before converting a brainstorm into a PRD, produce or update a state-of-art report:
 
 ```powershell
-.\hephaistos state-of-art "idea/topic" --query "scientific legal market search terms" --go INCONCLUSIVE
+.\hephaistos state-of-art "idea/topic" --query "scientific legal market search terms" --research-question "..." --method "..." --baseline "..." --metric "..." --benchmark "..." --go INCONCLUSIVE
 ```
 
-The report must confront the idea with external reality:
+The report must be paper-grade, not a loose summary. It must include:
 
-- what is already done;
-- useful scientific/legal/market indices;
-- what difference is required to justify doing it again;
-- why it may fail;
+- research questions;
+- method variants;
+- baselines to beat;
+- experiment axes;
+- metrics and KPIs;
+- benchmarks and datasets;
+- scaling or crossover tests;
+- external baselines;
+- already done work;
+- useful indices to reuse;
+- required gap/difference;
+- market or regulatory signal;
+- limitations and kill criteria;
+- transfer to PRD/tasks/benchmarks;
 - GO / NO_GO / MODIFY / INCONCLUSIVE;
 - next action.
 
