@@ -6,6 +6,7 @@ This repository is controlled by HEPHAISTOS. The conversation is not the source 
 Before brainstorming, PRD work, decomposition, implementation, review, research, tool use, or documentation updates:
 
 ```powershell
+.\hephaistos route
 .\hephaistos status
 ```
 
@@ -20,12 +21,24 @@ If the command is unavailable, read these files in order and report the blockage
 
 ## Routing Rules
 - If the project is `UNINITIALIZED`, only initialization is authorized.
-- If there is no PRD, use `.agent/skills/brainstorm.md`, then `.agent/skills/prd.md`.
-- If PRD exists but no task graph exists, use `.agent/skills/task-decomposition.md`.
-- If `TASK_ACTIVE` exists, work only on that task.
-- If task evidence is missing, create the required evidence before commit/push.
-- If the request is lateral, record it as `SUPPORT`, `BACKLOG`, `NEW_HYPOTHESIS`, or `REJECTED`.
+- If route says `BRAINSTORM_OR_PRD`, brainstorming is allowed only to feed a PRD.
+- If route says `TASK_GRAPH_REQUIRED`, create task files with dependencies, evidence, and `done_when`.
+- If route says `TASK_ACTIVE`, work only on that task.
+- If evidence is missing, create evidence before commit/push.
+- If the user proposes a lateral idea, connect it to `ACTIVE_SUBJECT` or record it with `radar-add`.
 - Never mark work complete from narrative confidence. Completion requires CLI/watchdog validation.
+
+## Creativity Rule
+Do not kill a useful idea by saying it is another topic too early.
+Ask:
+
+- Does it strengthen `ACTIVE_SUBJECT`?
+- Which allowed branch does it touch?
+- What claim does it create?
+- What minimal evidence would prove or kill it?
+- What business/research value could it support?
+
+Then classify it as `SUPPORT`, `NEW_HYPOTHESIS`, `BACKLOG`, or `REJECTED`.
 
 ## Required Closeout
 Before claiming a task is done, verify:
@@ -39,17 +52,8 @@ Before claiming a task is done, verify:
 - `hephaistos check <TASK_ID>` passes;
 - Git watchdog passes.
 
-## Scientific Output
-For research work, preserve a note usable for publication or investor synthesis without exposing sensitive implementation details:
+## Scientific + Business Output
+For research work, preserve both:
 
-- hypothesis;
-- why;
-- counter-hypothesis;
-- protocol;
-- baseline;
-- measurements;
-- raw result reference;
-- analysis;
-- conclusion;
-- decision: KEEP / MODIFY / KILL / INCONCLUSIVE;
-- next action.
+- a research note: hypothesis, protocol, baseline, measurements, raw result reference, analysis, conclusion;
+- a business note: pain, buyer, measurable gain, limit, next funding/proof step.
