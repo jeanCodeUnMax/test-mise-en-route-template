@@ -4,6 +4,12 @@
 ID: UNINITIALIZED
 Run `hephaistos init` to instantiate this template.
 
+## ACTIVE_SUBJECT
+UNDEFINED
+
+## ALLOWED_BRANCHES
+- Undefined
+
 ## HYPOTHESIS_ACTIVE
 ID: NONE
 None.
