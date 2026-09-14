@@ -38,7 +38,7 @@ class HephaistosRouteTests(unittest.TestCase):
             (root / '.hephaistos/tasks').mkdir(parents=True)
             (root / '.hephaistos/project.yaml').write_text('project:\n  status: ACTIVE\nactive_subject: Test subject\nallowed_branches:\n  - kv_cache\n')
             (root / '.hephaistos/state.yaml').write_text('active_task: null\n')
-            self.assertEqual(cli.route_state()['stage'], 'BRAINSTORM_OR_PRD')
+            self.assertEqual(cli.route_state()['stage'], 'STATE_OF_ART_REQUIRED')
 
     def test_prd_without_tasks_routes_to_task_graph(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -62,6 +62,17 @@ class HephaistosRouteTests(unittest.TestCase):
             route = cli.route_state()
             self.assertEqual(route['stage'], 'TASK_ACTIVE')
             self.assertIn('evidence/T001/result.txt', route['next_action'])
+
+    def test_state_of_art_report_routes_to_prd(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            configure(root)
+            (root / '.hephaistos/tasks').mkdir(parents=True)
+            (root / '.hephaistos/project.yaml').write_text('project:\n  status: ACTIVE\nactive_subject: Test subject\n')
+            (root / '.hephaistos/state.yaml').write_text('active_task: null\n')
+            (root / 'docs/radar').mkdir(parents=True)
+            (root / 'docs/radar/state-of-art-20260914-test.md').write_text('# State Of Art')
+            self.assertEqual(cli.route_state()['stage'], 'PRD_REQUIRED')
 
 
 if __name__ == '__main__':

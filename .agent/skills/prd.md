@@ -1,18 +1,20 @@
 # SKILL — PRD
 
 ## Mandatory preflight
-1. Run `.\hephaistos status` or read `.hephaistos/state.yaml` and `docs/master/PROJECT_MASTER.md` if the CLI is unavailable.
-2. Continue only if the current HEPHAISTOS state authorizes this skill.
-3. If another step is expected, stop and report the expected next action.
+1. Run `.\hephaistos route` or `.\hephaistos status`.
+2. Continue only if the route authorizes PRD.
+3. Read the latest `docs/radar/state-of-art-*.md` before writing the PRD.
+4. If no state-of-art report exists, stop and create/request one first.
 
 ## Goal
-Convert an authorized idea into an implementation-ready Product Requirements Document.
+Convert an authorized, externally checked idea into an implementation-ready Product Requirements Document.
 
 ## PRD structure
 - title
 - problem
 - users / actors
-- context
+- state-of-art summary
+- difference / thesis
 - goals
 - non-goals
 - functional requirements
@@ -32,10 +34,13 @@ Convert an authorized idea into an implementation-ready Product Requirements Doc
 Do not hide uncertainty.
 Mark inferred requirements as assumptions.
 Separate MUST / SHOULD / COULD where useful.
+Do not claim novelty unless the state-of-art report supports a specific difference.
 
 ## Completion gate
 A PRD is ready for decomposition only if:
+- state-of-art report is referenced
 - main deliverables are explicit
 - success criteria are measurable
 - unresolved blockers are identified
 - out-of-scope items are explicit
+- first proof/benchmark path is visible
