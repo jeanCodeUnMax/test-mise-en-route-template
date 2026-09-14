@@ -10,6 +10,7 @@ LEDGER = H / 'ledger.jsonl'
 MASTER = ROOT / 'docs/master/PROJECT_MASTER.md'
 PRD = ROOT / 'docs/prd/PRD.md'
 RADAR = ROOT / '.hephaistos/radar.jsonl'
+RADAR_DOCS = ROOT / 'docs/radar'
 
 NULLS = {'', 'null', 'none', 'NONE', 'NULL', '-'}
 
@@ -58,6 +59,24 @@ def active_task_id():
     v = field(stxt(), 'active_task', '')
     return None if v.strip().strip('"\'') in NULLS else v.strip().strip('"\'')
 
+
+def state_of_art_reports():
+    if not RADAR_DOCS.exists():
+        return []
+    return sorted(RADAR_DOCS.glob('state-of-art-*.md'))
+
+
+def has_state_of_art():
+    return bool(state_of_art_reports())
+
+
+def slugify(value):
+    slug = re.sub(r'[^a-zA-Z0-9]+', '-', value.lower()).strip('-')
+    return slug[:60] or 'idea'
+
+
+def today():
+    return datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%d')
 
 def req_init():
     if pstatus() != 'ACTIVE':
@@ -135,13 +154,21 @@ def route_state():
         }
     a = tasks()
     ac = active(a)
+    if not PRD.exists() and not a and not has_state_of_art():
+        return {
+            'stage': 'STATE_OF_ART_REQUIRED',
+            'authorized': 'brainstorm -> state-of-art',
+            'forbidden': ['prd', 'task-decomposition', 'implementation', 'benchmark', 'finish', 'claim_done'],
+            'next_action': '.\\hephaistos state-of-art "idea/topic" --query "search terms" --go NO_GO',
+            'reason': 'No PRD, no task graph, and no state-of-art report exist yet.'
+        }
     if not PRD.exists() and not a:
         return {
-            'stage': 'BRAINSTORM_OR_PRD',
-            'authorized': 'brainstorm -> prd',
+            'stage': 'PRD_REQUIRED',
+            'authorized': 'prd',
             'forbidden': ['implementation', 'benchmark', 'finish', 'claim_done'],
-            'next_action': 'Run brainstorm, then create docs/prd/PRD.md with measurable success criteria.',
-            'reason': 'No PRD and no task graph exist yet.'
+            'next_action': 'Use the latest docs/radar/state-of-art-*.md to create docs/prd/PRD.md with measurable success criteria.',
+            'reason': 'State-of-art exists; PRD is now the next conversion step.'
         }
     if PRD.exists() and not a:
         return {
@@ -366,6 +393,43 @@ def radar_add(args):
     print('RADAR_CAPTURED: ' + args.classification)
 
 
+def state_of_art(args):
+    req_init()
+    RADAR_DOCS.mkdir(parents=True, exist_ok=True)
+    H.mkdir(exist_ok=True)
+    RADAR.touch(exist_ok=True)
+    filename = RADAR_DOCS / f"state-of-art-{today()}-{slugify(args.idea)}.md"
+    sources = args.source or []
+    source_lines = ''.join(f"- {s}\n" for s in sources) if sources else "- TODO: add sources from web/scientific/legal/market search\n"
+    content = (
+        f"# State Of Art — {args.idea}\n\n"
+        f"## ACTIVE_SUBJECT\n{active_subject()}\n\n"
+        f"## QUERY\n{args.query}\n\n"
+        f"## SOURCES\n{source_lines}\n"
+        f"## ALREADY_DONE\n{args.already_done or 'TODO: summarize what already exists.'}\n\n"
+        f"## USEFUL_INDICES\n{args.indices or 'TODO: note reusable methods, warnings, datasets, metrics, or architecture hints.'}\n\n"
+        f"## GAP_OR_DIFFERENCE_REQUIRED\n{args.gap or 'TODO: state the significant difference needed to justify continuing.'}\n\n"
+        f"## MARKET_OR_REGULATORY_SIGNAL\n{args.market or 'TODO: buyer pain, law/regulation, cost, safety, compliance, or timing signal.'}\n\n"
+        f"## GO_NO_GO\n{args.go}\n\n"
+        f"## WHY\n{args.why or 'TODO: explain why this deserves PRD, modification, backlog, or rejection.'}\n\n"
+        f"## NEXT_ACTION\n{args.next_action or 'TODO: PRD / NEW_HYPOTHESIS / BACKLOG / REJECTED.'}\n"
+    )
+    filename.write_text(content, encoding='utf-8')
+    row = {
+        'ts': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        'event': 'STATE_OF_ART_RECORDED',
+        'idea': args.idea,
+        'query': args.query,
+        'report': str(filename.relative_to(ROOT)),
+        'go_no_go': args.go,
+        'next_action': args.next_action or ''
+    }
+    with RADAR.open('a', encoding='utf-8') as f:
+        f.write(json.dumps(row, ensure_ascii=False) + '\n')
+    log('STATE_OF_ART_RECORDED', data=row)
+    sync(nxt='Use ' + str(filename.relative_to(ROOT)) + ' to decide PRD, NEW_HYPOTHESIS, BACKLOG, or REJECTED.')
+    print('STATE_OF_ART_RECORDED: ' + str(filename.relative_to(ROOT)))
+
 def main():
     p = argparse.ArgumentParser(prog='hephaistos')
     s = p.add_subparsers(dest='cmd', required=True)
@@ -381,6 +445,17 @@ def main():
     for n in ['status', 'check', 'start', 'finish']:
         q = s.add_parser(n)
         q.add_argument('task', nargs='?')
+    q = s.add_parser('state-of-art')
+    q.add_argument('idea')
+    q.add_argument('--query', required=True)
+    q.add_argument('--source', action='append')
+    q.add_argument('--already-done')
+    q.add_argument('--indices')
+    q.add_argument('--gap')
+    q.add_argument('--market')
+    q.add_argument('--go', choices=['GO', 'NO_GO', 'MODIFY', 'INCONCLUSIVE'], default='INCONCLUSIVE')
+    q.add_argument('--why')
+    q.add_argument('--next-action')
     q = s.add_parser('radar-add')
     q.add_argument('idea')
     q.add_argument('--link', required=True)
@@ -389,7 +464,7 @@ def main():
     q.add_argument('--evidence')
     q.add_argument('--business')
     a = p.parse_args()
-    return {'init': init, 'tasks': list_tasks, 'route': route, 'status': status, 'check': check, 'start': start, 'finish': finish, 'radar-add': radar_add}[a.cmd](a) or 0
+    return {'init': init, 'tasks': list_tasks, 'route': route, 'status': status, 'check': check, 'start': start, 'finish': finish, 'state-of-art': state_of_art, 'radar-add': radar_add}[a.cmd](a) or 0
 
 
 if __name__ == '__main__':
